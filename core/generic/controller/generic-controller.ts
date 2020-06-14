@@ -7,12 +7,19 @@ export abstract class GenericController<T extends mongoose.Document> {
     
     constructor(protected model: mongoose.Model<T>) {
     }
+    
+    applyRoutes(koaRouter: KoaRouter<any, {}>): void {
+        throw new Error("Method not implemented.");
+    }
 
+    
     findAll = async (ctx: Context, next: Next) => {
         
         ctx.body = new OkResponse(await this.model.find())
         
+        
     }
+
     
     findByID = async (ctx: Context, next: Next) => {
         
@@ -59,7 +66,4 @@ export abstract class GenericController<T extends mongoose.Document> {
         
     }
 
-    applyRoutes(koaRouter: KoaRouter<any, {}>): void {
-        throw new Error("Method not implemented.");
-    }
 }
