@@ -12,5 +12,7 @@ export const config = {
         url: process.env.DB_URL || 'mongodb://localhost/crud-api'
     },
 
-    myConn: mongoConn
+    myConn: mongoConn,
+
+    security: process.env.SALT_ROUNDS || 10,
 }

@@ -1,4 +1,4 @@
-import mongoose, { mongo, disconnect } from 'mongoose'
+import mongoose from 'mongoose'
 import { IConn } from './../generic/interface/database';
 import { config } from './../../config/api-config';
 
@@ -6,7 +6,6 @@ export class MongoDb implements IConn {
 
     constructor() {
 
-        mongoose.Promise = global.Promise
         mongoose.set('useCreateIndex', true)
         mongoose.set('useFindAndModify', false)
 

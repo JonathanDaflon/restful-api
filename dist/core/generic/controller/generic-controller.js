@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenericController = void 0;
-var ok_response_1 = require("../../api/api-response/ok-response");
+var ok_response_1 = require("./../../api/api-response/ok-response");
 var GenericController = /** @class */ (function () {
     function GenericController(model) {
         var _this = this;
@@ -57,16 +57,22 @@ var GenericController = /** @class */ (function () {
             });
         }); };
         this.findByID = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b;
+            var _a, _b, err_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        _c.trys.push([0, 2, , 3]);
                         _a = ctx;
                         _b = ok_response_1.OkResponse.bind;
                         return [4 /*yield*/, this.model.findById({ _id: ctx.params.id })];
                     case 1:
                         _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
-                        return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_1 = _c.sent();
+                        console.log(err_1.mes);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
@@ -79,15 +85,17 @@ var GenericController = /** @class */ (function () {
                         return [4 /*yield*/, document.save()];
                     case 1:
                         _a.sent();
-                        next();
                         return [2 /*return*/];
                 }
             });
         }); };
         this.overwriteDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
+            var options;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)];
+                    case 0:
+                        options = { runValidators: true, overwrite: true };
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)];
                     case 1:
                         _a.sent();
                         next();
@@ -96,9 +104,12 @@ var GenericController = /** @class */ (function () {
             });
         }); };
         this.updateDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
+            var options;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)];
+                    case 0:
+                        options = { runValidators: true, new: true };
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)];
                     case 1:
                         _a.sent();
                         console.log(ctx.request.type);

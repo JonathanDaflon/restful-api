@@ -1,7 +1,8 @@
+import { OkResponse } from './../../api/api-response/ok-response';
+import { ErrorResponse } from './../../api/api-response/error-response';
 import KoaRouter from 'koa-router';
 import * as mongoose from 'mongoose';
 import { Context, Next } from 'koa';
-import { OkResponse } from '../../api/api-response/ok-response';
 
 export abstract class GenericController<T extends mongoose.Document> {
     
@@ -16,14 +17,20 @@ export abstract class GenericController<T extends mongoose.Document> {
     findAll = async (ctx: Context, next: Next) => {
         
         ctx.body = new OkResponse(await this.model.find())
-        
+
         
     }
 
     
     findByID = async (ctx: Context, next: Next) => {
         
-        ctx.body = new OkResponse(await this.model.findById({_id: ctx.params.id}))
+        try{
+            ctx.body = new OkResponse(await this.model.findById({_id: ctx.params.id}))  
+            
+        } catch (err) {
+            console.log(err.mes)
+        }
+           
         
     }
 
@@ -31,18 +38,16 @@ export abstract class GenericController<T extends mongoose.Document> {
 
         let document = new this.model(ctx.request.body)
         await document.save()
-        
-        next()
     }
    
     overwriteDocument = async (ctx: Context, next: Next) => {
-            
-        await this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)
+        const options = {runValidators: true, overwrite: true}
+        await this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
         next()
     }
-
+    
     updateDocument = async (ctx: Context, next: Next) => {
-            
+        const options = {runValidators: true, new: true}
         await this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)
         console.log(ctx.request.type)
         next()

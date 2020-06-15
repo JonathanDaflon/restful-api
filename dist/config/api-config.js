@@ -12,5 +12,6 @@ exports.config = {
     mongo: {
         url: process.env.DB_URL || 'mongodb://localhost/crud-api'
     },
-    myConn: mongodb_1.mongoConn
+    myConn: mongodb_1.mongoConn,
+    security: process.env.SALT_ROUNDS || 10,
 };

@@ -8,7 +8,6 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var api_config_1 = require("./../../config/api-config");
 var MongoDb = /** @class */ (function () {
     function MongoDb() {
-        mongoose_1.default.Promise = global.Promise;
         mongoose_1.default.set('useCreateIndex', true);
         mongoose_1.default.set('useFindAndModify', false);
         // CONNECTION EVENTS

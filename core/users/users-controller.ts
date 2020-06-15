@@ -1,10 +1,10 @@
 import KoaRouter from 'koa-router'
 import { GenericController } from '../generic/controller/generic-controller'
-import { User, IUser } from './users-model'
+import { User } from './users-model'
 
 
 // An exemple of how to implement a Resource using the Mongoose model and super
-class UsersController extends GenericController<IUser> {
+class UsersController extends GenericController<User> {
     
     constructor() {
         super(User)
