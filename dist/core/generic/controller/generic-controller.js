@@ -38,25 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenericController = void 0;
 var ok_response_1 = require("./../../api/api-response/ok-response");
+var error_response_1 = require("./../../api/api-response/error-response");
 var GenericController = /** @class */ (function () {
     function GenericController(model) {
         var _this = this;
         this.model = model;
         this.findAll = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _a = ctx;
-                        _b = ok_response_1.OkResponse.bind;
-                        return [4 /*yield*/, this.model.find()];
-                    case 1:
-                        _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
-                        return [2 /*return*/];
-                }
-            });
-        }); };
-        this.findByID = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
             var _a, _b, err_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -64,76 +51,151 @@ var GenericController = /** @class */ (function () {
                         _c.trys.push([0, 2, , 3]);
                         _a = ctx;
                         _b = ok_response_1.OkResponse.bind;
-                        return [4 /*yield*/, this.model.findById({ _id: ctx.params.id })];
+                        return [4 /*yield*/, this.model.find()];
                     case 1:
                         _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
                         return [3 /*break*/, 3];
                     case 2:
                         err_1 = _c.sent();
-                        console.log(err_1.mes);
+                        // Falta implementar validação JWT error 401
+                        ctx.body = new error_response_1.ErrorResponse(err_1.message, ctx);
+                        ctx.throw(err_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        // Find a document of the Resource
+        this.findByID = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
+            var a, err_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.model.findById({ _id: ctx.params.id })
+                            // If Document exists
+                        ];
+                    case 1:
+                        a = _a.sent();
+                        // If Document exists
+                        if (a != null || undefined) {
+                            ctx.body = new ok_response_1.OkResponse(a);
+                            next();
+                        }
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_2 = _a.sent();
+                        ctx.body = new error_response_1.ErrorResponse(err_2.message, ctx);
+                        ctx.throw(err_2);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.newDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var document;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var document_1, _a, _b, err_3;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        document = new this.model(ctx.request.body);
-                        return [4 /*yield*/, document.save()];
+                        _c.trys.push([0, 2, , 3]);
+                        document_1 = new this.model(ctx.request.body);
+                        _a = ctx;
+                        _b = ok_response_1.OkResponse.bind;
+                        return [4 /*yield*/, document_1.save()];
                     case 1:
-                        _a.sent();
-                        return [2 /*return*/];
+                        _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_3 = _c.sent();
+                        ctx.body = new error_response_1.ErrorResponse(err_3.message, ctx);
+                        ctx.throw(err_3);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.overwriteDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var options;
+            var options, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        _a.trys.push([0, 2, , 3]);
                         options = { runValidators: true, overwrite: true };
-                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)];
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
+                                .then(function (document) {
+                                if (document) {
+                                    ctx.body = new ok_response_1.OkResponse(document);
+                                    next();
+                                }
+                                else {
+                                    ctx.throw();
+                                }
+                            })];
                     case 1:
                         _a.sent();
-                        next();
-                        return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_4 = _a.sent();
+                        ctx.body = new error_response_1.ErrorResponse(err_4.message, ctx);
+                        ctx.throw(err_4);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.updateDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var options;
+            var options, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        _a.trys.push([0, 2, , 3]);
                         options = { runValidators: true, new: true };
-                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)];
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
+                                .then(function (document) {
+                                if (document) {
+                                    ctx.body = new ok_response_1.OkResponse(document);
+                                    next();
+                                }
+                                else {
+                                    ctx.throw();
+                                }
+                            })];
                     case 1:
                         _a.sent();
-                        console.log(ctx.request.type);
-                        next();
-                        return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_5 = _a.sent();
+                        ctx.body = new error_response_1.ErrorResponse(err_5.message, ctx);
+                        ctx.throw(err_5);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
         this.deleteDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
+            var err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.model.remove({ _id: ctx.params.id }).exec().then(function (results) {
-                            if (results.n) {
-                                ctx.status = 204;
-                            }
-                            else {
-                                ctx.status = 404;
-                            }
-                            console.log(ctx.status);
-                            next();
-                        })];
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, this.model.remove({ _id: ctx.params.id }).exec().then(function (results) {
+                                if (results.n) {
+                                    new ok_response_1.OkResponse('Documento excluído');
+                                    next();
+                                }
+                                else {
+                                    ctx.throw();
+                                }
+                            })];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 2:
+                        err_6 = _a.sent();
+                        ctx.body = new error_response_1.ErrorResponse(err_6.message, ctx);
+                        ctx.throw(err_6);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         }); };
