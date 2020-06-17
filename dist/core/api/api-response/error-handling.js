@@ -66,29 +66,37 @@ var ErrorHandler = /** @class */ (function () {
     // Handler with a Switch/case for error messages
     ErrorHandler.prototype.handler = function (err, ctx) {
         return __awaiter(this, void 0, void 0, function () {
-            var response;
+            var response, messages, name_1;
             return __generator(this, function (_a) {
-                response = { message: '' };
+                response = {};
                 // Build response or do whatever you want depending on the type of error 
                 switch (err.name) {
                     default: {
-                        response = { message: 'unkown error ' };
+                        response = { message: err.message };
                     }
+                    // A friendly error message for a MongoError exemple
                     case 'MongoError':
                         if (err.message.startsWith('E11000')) {
+                            ctx.status = 400;
                             response = {
                                 message: "esse email já está em uso"
                             };
                             break;
                         }
+                    // Here all the validations errors from Mongoose will be printed into a json object
                     case 'ValidationError':
                         if (err.message.startsWith('User validation')) {
                             ctx.status = 400;
+                            messages = [];
+                            for (name_1 in err.errors) {
+                                messages.push({ message: err.errors[name_1].message });
+                            }
                             response = {
-                                message: "erro de validação"
+                                message: messages
                             };
                             break;
                         }
+                    // Implementar case autorização negada
                 }
                 // End processing by sending response
                 ctx.body = response;

@@ -93,20 +93,20 @@ var GenericController = /** @class */ (function () {
             });
         }); };
         this.newDocument = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var document_1, _a, _b, err_3;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var document_1, err_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _c.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 2, , 3]);
                         document_1 = new this.model(ctx.request.body);
-                        _a = ctx;
-                        _b = ok_response_1.OkResponse.bind;
-                        return [4 /*yield*/, document_1.save()];
+                        return [4 /*yield*/, document_1.save().then(function (doc) {
+                                ctx.body = new ok_response_1.OkResponse(doc);
+                            })];
                     case 1:
-                        _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
+                        _a.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        err_3 = _c.sent();
+                        err_3 = _a.sent();
                         ctx.body = new error_response_1.ErrorResponse(err_3.message, ctx);
                         ctx.throw(err_3);
                         return [3 /*break*/, 3];

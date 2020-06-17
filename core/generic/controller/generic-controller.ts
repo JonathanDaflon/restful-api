@@ -50,7 +50,9 @@ export abstract class GenericController<T extends mongoose.Document> {
 
         try {
             let document = new this.model(ctx.request.body)
-            ctx.body = new OkResponse(await document.save())
+            await document.save().then(doc => {
+                ctx.body = new OkResponse(doc)
+            })
 
         } catch (err) {
             ctx.body = new ErrorResponse(err.message, ctx)
