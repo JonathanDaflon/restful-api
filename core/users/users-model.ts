@@ -2,7 +2,6 @@ import { config } from './../../config/api-config';
 import * as mongoose from 'mongoose'
 import * as bcrypt from 'bcrypt'
 
-// An exemple of a resource of Users.
 export interface User extends mongoose.Document {
     name: string,
     email: string,
@@ -10,7 +9,6 @@ export interface User extends mongoose.Document {
 
 }
 
-// A Schema with some basic validations built-in in Mongoose library.
 const userSchema: mongoose.Schema = new mongoose.Schema ({
     name: {
         type: String,
@@ -29,7 +27,6 @@ const userSchema: mongoose.Schema = new mongoose.Schema ({
         type: String,
         required: true,
         select: false,
-        bcrypt: true
     },
     gender: {
         type: String,
@@ -38,7 +35,6 @@ const userSchema: mongoose.Schema = new mongoose.Schema ({
     }
 })
 
-// A Middleware to encrypt the password of Users by save()
 userSchema.pre<User>('save', function(next) {
    
     const user: User = this
@@ -54,7 +50,6 @@ userSchema.pre<User>('save', function(next) {
     }
 })
 
-// A Middleware to encrypt the password of Users by update()
 userSchema.pre('findOneAndUpdate', function(next) {
     
     if (!this.getUpdate().password) {

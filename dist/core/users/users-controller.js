@@ -16,7 +16,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersController = void 0;
 var generic_controller_1 = require("../generic/controller/generic-controller");
 var users_model_1 = require("./users-model");
-// An exemple of how to implement a Resource using the Mongoose model and super
 var UsersController = /** @class */ (function (_super) {
     __extends(UsersController, _super);
     function UsersController() {

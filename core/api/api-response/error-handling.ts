@@ -1,73 +1,62 @@
 import { Context, Next } from 'koa';
 import { config } from '../../../config/api-config';
+import { Error } from 'mongoose'
+import { ErrorResponse } from './error-response';
+import { MongoError } from 'mongodb';
 
-
-// A centralized Error Handler
 class ErrorHandler {
 
-    // Catch all errors thrown by ctx.throw then emit 'error' event
     async catcher(ctx: Context, next: Next) {
 
         try {
-           return await next()
-        
-        } catch (err:any) {
-           
-            ctx.type = 'json'
-            ctx.status = parseInt(err.status, 10) || ctx.status || 500
+            return await next()
+
+        } catch (err) {
             ctx.app.emit('error', err, ctx)
         }
     }
 
-    // Handler with a Switch/case for error messages
-    async handler(err: any, ctx: Context) {
+    async handler(err: Error, ctx: Context) {
 
-        let response = {}
+        let response = new ErrorResponse(err.message, ctx)
 
-        // Build response or do whatever you want depending on the type of error 
         switch (err.name) {
-            
-            default: {
-              response = { message: err.message}
-            }
-            
-            // A friendly error message for a MongoError exemple
-            case 'MongoError': 
-                if (err.message.startsWith('E11000')) {
-                    ctx.status = 400
-                    response = {
-                        message: "esse email já está em uso"
-                    }
+
+            case 'MongoError':
+
+                let mongoError = <MongoError>err
+                if (mongoError.message.startsWith('E11000')) {
+                    response.Data(mongoError.message);
                     break
                 }
-            
-            // Here all the validations errors from Mongoose will be printed into a json object
-            case 'ValidationError': 
-            if (err.message.startsWith('User validation')) {
-                ctx.status = 400
-                const messages: any[] = []
-                for(let name in err.errors){
-                  messages.push({message: err.errors[name].message})
+
+            case 'ValidationError':
+
+                let validationError = <Error.ValidationError>err;
+
+                if (err.message.startsWith('User validation')) {
+
+                    if (Array.isArray(validationError.errors)) {
+
+                        let messages: string[] = [];
+
+                        for (let i = 0; i < validationError.errors.length; i++) {
+                            messages.push(validationError.errors[i].message)
+                        }
+                        response.Data(messages)
+                        break
+                    }
                 }
-                response = {
-                    message: messages
-                }
-            break
+
+            ctx.body = response;
+
+            if (config.koa.debug) {
+                console.log('koa middleware - error ->')
+                console.log(err)
             }
-            
-            // Implementar case autorização negada
-          
-        }
-        // End processing by sending response
-        ctx.body = response;
-
-
-        if (config.koa.debug) {
-            console.log('koa middleware - error ->')
-            console.log(err)
         }
     }
-    
+
 }
 
 export const errorHandler = new ErrorHandler()

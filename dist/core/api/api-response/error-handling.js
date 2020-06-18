@@ -38,11 +38,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = void 0;
 var api_config_1 = require("../../../config/api-config");
-// A centralized Error Handler
+var error_response_1 = require("./error-response");
 var ErrorHandler = /** @class */ (function () {
     function ErrorHandler() {
     }
-    // Catch all errors thrown by ctx.throw then emit 'error' event
     ErrorHandler.prototype.catcher = function (ctx, next) {
         return __awaiter(this, void 0, void 0, function () {
             var err_1;
@@ -54,8 +53,6 @@ var ErrorHandler = /** @class */ (function () {
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
                         err_1 = _a.sent();
-                        ctx.type = 'json';
-                        ctx.status = parseInt(err_1.status, 10) || ctx.status || 500;
                         ctx.app.emit('error', err_1, ctx);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
@@ -63,46 +60,35 @@ var ErrorHandler = /** @class */ (function () {
             });
         });
     };
-    // Handler with a Switch/case for error messages
     ErrorHandler.prototype.handler = function (err, ctx) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, messages, name_1;
+            var response, mongoError, validationError, messages, i;
             return __generator(this, function (_a) {
-                response = {};
-                // Build response or do whatever you want depending on the type of error 
+                response = new error_response_1.ErrorResponse(err.message, ctx);
                 switch (err.name) {
-                    default: {
-                        response = { message: err.message };
-                    }
-                    // A friendly error message for a MongoError exemple
                     case 'MongoError':
-                        if (err.message.startsWith('E11000')) {
-                            ctx.status = 400;
-                            response = {
-                                message: "esse email já está em uso"
-                            };
+                        mongoError = err;
+                        if (mongoError.message.startsWith('E11000')) {
+                            response.Data(mongoError.message);
                             break;
                         }
-                    // Here all the validations errors from Mongoose will be printed into a json object
                     case 'ValidationError':
+                        validationError = err;
                         if (err.message.startsWith('User validation')) {
-                            ctx.status = 400;
-                            messages = [];
-                            for (name_1 in err.errors) {
-                                messages.push({ message: err.errors[name_1].message });
+                            if (Array.isArray(validationError.errors)) {
+                                messages = [];
+                                for (i = 0; i < validationError.errors.length; i++) {
+                                    messages.push(validationError.errors[i].message);
+                                }
+                                response.Data(messages);
+                                break;
                             }
-                            response = {
-                                message: messages
-                            };
-                            break;
                         }
-                    // Implementar case autorização negada
-                }
-                // End processing by sending response
-                ctx.body = response;
-                if (api_config_1.config.koa.debug) {
-                    console.log('koa middleware - error ->');
-                    console.log(err);
+                        ctx.body = response;
+                        if (api_config_1.config.koa.debug) {
+                            console.log('koa middleware - error ->');
+                            console.log(err);
+                        }
                 }
                 return [2 /*return*/];
             });

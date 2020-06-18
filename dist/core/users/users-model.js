@@ -23,7 +23,6 @@ exports.User = void 0;
 var api_config_1 = require("./../../config/api-config");
 var mongoose = __importStar(require("mongoose"));
 var bcrypt = __importStar(require("bcrypt"));
-// A Schema with some basic validations built-in in Mongoose library.
 var userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -41,7 +40,6 @@ var userSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false,
-        bcrypt: true
     },
     gender: {
         type: String,
@@ -49,7 +47,6 @@ var userSchema = new mongoose.Schema({
         enum: ['Male', 'Female']
     }
 });
-// A Middleware to encrypt the password of Users by save()
 userSchema.pre('save', function (next) {
     var user = this;
     if (!user.isModified('password')) {
@@ -63,7 +60,6 @@ userSchema.pre('save', function (next) {
         }).catch(next);
     }
 });
-// A Middleware to encrypt the password of Users by update()
 userSchema.pre('findOneAndUpdate', function (next) {
     var _this = this;
     if (!this.getUpdate().password) {
