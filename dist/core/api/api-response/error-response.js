@@ -19,7 +19,7 @@ var ErrorResponse = /** @class */ (function (_super) {
     __extends(ErrorResponse, _super);
     function ErrorResponse(data, ctx) {
         var _this = _super.call(this, false, undefined, data) || this;
-        ctx.status = 500;
+        ctx.status = ctx.status;
         return _this;
     }
     return ErrorResponse;

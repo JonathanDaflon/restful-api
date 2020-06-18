@@ -8,4 +8,7 @@ export class GenericResponse {
         this.data = data
         this.error = error
     }
+    Data(data: any) {
+        this.data = data;
+    }
 }

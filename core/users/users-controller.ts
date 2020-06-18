@@ -3,7 +3,6 @@ import { GenericController } from '../generic/controller/generic-controller'
 import { User } from './users-model'
 
 
-// An exemple of how to implement a Resource using the Mongoose model and super
 class UsersController extends GenericController<User> {
     
     constructor() {
@@ -23,7 +22,6 @@ class UsersController extends GenericController<User> {
         koaRouter.patch('/users/:id', this.updateDocument)
 
         koaRouter.del('/users/:id', this.deleteDocument)
-
     }
 }
     export const usersController = new UsersController()

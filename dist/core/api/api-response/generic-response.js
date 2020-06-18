@@ -10,6 +10,9 @@ var GenericResponse = /** @class */ (function () {
         this.data = data;
         this.error = error;
     }
+    GenericResponse.prototype.Data = function (data) {
+        this.data = data;
+    };
     return GenericResponse;
 }());
 exports.GenericResponse = GenericResponse;

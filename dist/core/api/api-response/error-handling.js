@@ -35,61 +35,65 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.KoaServer = void 0;
-var error_handling_1 = require("./../api-response/error-handling");
-var koa_1 = __importDefault(require("koa"));
-var koa_router_1 = __importDefault(require("koa-router"));
-var koa_body_1 = __importDefault(require("koa-body"));
-var cors_1 = __importDefault(require("@koa/cors"));
-var koa_logger_1 = __importDefault(require("koa-logger"));
+exports.errorHandler = void 0;
 var api_config_1 = require("../../../config/api-config");
-var generic_response_1 = require("./../api-response/generic-response");
-var KoaServer = /** @class */ (function () {
-    function KoaServer() {
-        var _this = this;
-        this.app = module.exports = new koa_1.default();
-        this.router = new koa_router_1.default();
-        //middleware
-        this.app.use(cors_1.default())
-            .use(koa_body_1.default())
-            .use(koa_logger_1.default())
-            .use(error_handling_1.errorHandler.catcher);
-        this.app.on('error', error_handling_1.errorHandler.handler);
-        // Middleware below this line is only reached if JWT token is valid
-        this.router.prefix(api_config_1.config.koa.prefix);
-        this.router.get('/status', function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
+var error_response_1 = require("./error-response");
+var ErrorHandler = /** @class */ (function () {
+    function ErrorHandler() {
+    }
+    ErrorHandler.prototype.catcher = function (ctx, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var err_1;
             return __generator(this, function (_a) {
-                ctx.body = new generic_response_1.GenericResponse(true, 'Servidor Online', undefined);
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, next()];
+                    case 1: return [2 /*return*/, _a.sent()];
+                    case 2:
+                        err_1 = _a.sent();
+                        ctx.app.emit('error', err_1, ctx);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ErrorHandler.prototype.handler = function (err, ctx) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, mongoError, validationError, messages, i;
+            return __generator(this, function (_a) {
+                response = new error_response_1.ErrorResponse(err.message, ctx);
+                switch (err.name) {
+                    case 'MongoError':
+                        mongoError = err;
+                        if (mongoError.message.startsWith('E11000')) {
+                            response.Data(mongoError.message);
+                            break;
+                        }
+                    case 'ValidationError':
+                        validationError = err;
+                        if (err.message.startsWith('User validation')) {
+                            if (Array.isArray(validationError.errors)) {
+                                messages = [];
+                                for (i = 0; i < validationError.errors.length; i++) {
+                                    messages.push(validationError.errors[i].message);
+                                }
+                                response.Data(messages);
+                                break;
+                            }
+                        }
+                        ctx.body = response;
+                        if (api_config_1.config.koa.debug) {
+                            console.log('koa middleware - error ->');
+                            console.log(err);
+                        }
+                }
                 return [2 /*return*/];
             });
-        }); });
-    }
-    KoaServer.prototype.applyRoutes = function (controllers) {
-        for (var _i = 0, controllers_1 = controllers; _i < controllers_1.length; _i++) {
-            var controller = controllers_1[_i];
-            controller.applyRoutes(this.router);
-        }
-        this.app.use(this.router.routes())
-            .use(this.router.allowedMethods());
-        if (api_config_1.config.koa.debug) {
-            console.log("Rotas Dispon\u00EDveis\n            ----------------------------------\n            ");
-            this.router.stack.map(function (i) {
-                return console.log("http://localhost:" + api_config_1.config.koa.port + i.path);
-            });
-        }
+        });
     };
-    KoaServer.prototype.init = function () {
-        var server = this.app.listen(api_config_1.config.koa.port);
-        if (api_config_1.config.koa.debug) {
-            console.log('Koa Online: ');
-            console.log(server.address());
-        }
-        return server;
-    };
-    return KoaServer;
+    return ErrorHandler;
 }());
-exports.KoaServer = KoaServer;
+exports.errorHandler = new ErrorHandler();

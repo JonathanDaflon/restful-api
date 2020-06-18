@@ -57,22 +57,17 @@ var GenericController = /** @class */ (function () {
             });
         }); };
         this.findByID = function (ctx, next) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, _b, err_1;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _c.trys.push([0, 2, , 3]);
-                        _a = ctx;
-                        _b = ok_response_1.OkResponse.bind;
-                        return [4 /*yield*/, this.model.findById({ _id: ctx.params.id })];
+            var a;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.model.findById({ _id: ctx.params.id })];
                     case 1:
-                        _a.body = new (_b.apply(ok_response_1.OkResponse, [void 0, _c.sent()]))();
-                        return [3 /*break*/, 3];
-                    case 2:
-                        err_1 = _c.sent();
-                        console.log(err_1.mes);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        a = _a.sent();
+                        if (a != null || undefined) {
+                            ctx.body = new ok_response_1.OkResponse(a);
+                            next();
+                        }
+                        return [2 /*return*/];
                 }
             });
         }); };
@@ -82,7 +77,9 @@ var GenericController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         document = new this.model(ctx.request.body);
-                        return [4 /*yield*/, document.save()];
+                        return [4 /*yield*/, document.save().then(function (doc) {
+                                ctx.body = new ok_response_1.OkResponse(doc);
+                            })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -95,10 +92,15 @@ var GenericController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = { runValidators: true, overwrite: true };
-                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)];
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
+                                .then(function (document) {
+                                if (document) {
+                                    ctx.body = new ok_response_1.OkResponse(document);
+                                    next();
+                                }
+                            })];
                     case 1:
                         _a.sent();
-                        next();
                         return [2 /*return*/];
                 }
             });
@@ -109,11 +111,15 @@ var GenericController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         options = { runValidators: true, new: true };
-                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body)];
+                        return [4 /*yield*/, this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
+                                .then(function (document) {
+                                if (document) {
+                                    ctx.body = new ok_response_1.OkResponse(document);
+                                    next();
+                                }
+                            })];
                     case 1:
                         _a.sent();
-                        console.log(ctx.request.type);
-                        next();
                         return [2 /*return*/];
                 }
             });
@@ -123,13 +129,9 @@ var GenericController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.model.remove({ _id: ctx.params.id }).exec().then(function (results) {
                             if (results.n) {
-                                ctx.status = 204;
+                                new ok_response_1.OkResponse('Documento excluído');
+                                next();
                             }
-                            else {
-                                ctx.status = 404;
-                            }
-                            console.log(ctx.status);
-                            next();
                         })];
                     case 1:
                         _a.sent();
