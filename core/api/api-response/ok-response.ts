@@ -1,8 +1,8 @@
 import { GenericResponse } from './generic-response';
 
-export class OkResponse extends GenericResponse{
-    
+export class OkResponse extends GenericResponse {
+
     constructor(data: any) {
-        super(true, data, undefined)
+        super(true, data)
     }
 }

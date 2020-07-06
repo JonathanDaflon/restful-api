@@ -1,22 +1,27 @@
+import { MyHeroException } from './../../api/exception/my-hero-exception';
 import { OkResponse } from './../../api/api-response/ok-response';
-import { ErrorResponse } from './../../api/api-response/error-response';
 import KoaRouter from 'koa-router';
 import * as mongoose from 'mongoose';
 import { Context, Next } from 'koa';
+import { BaseModel } from '../model/base-model';
+import { HttpService } from '../http/http-factory';
 
-export abstract class GenericController<T extends mongoose.Document> {
+export abstract class GenericController<T extends BaseModel> {
+
+    protected httpService:  HttpService ;
 
     constructor(protected model: mongoose.Model<T>) {
+        this.httpService = new HttpService();
     }
 
     applyRoutes(koaRouter: KoaRouter<any, {}>): void {
-        throw new Error("Method not implemented.");
+        throw new MyHeroException("Method not implemented.");
     }
 
 
     findAll = async (ctx: Context, next: Next) => {
-            ctx.body = new OkResponse(await this.model.find())
-
+        ctx.body = new OkResponse(await this.model.find())
+        next()
     }
 
     findByID = async (ctx: Context, next: Next) => {

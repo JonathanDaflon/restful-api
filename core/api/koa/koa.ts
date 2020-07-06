@@ -8,42 +8,41 @@ import { config } from '../../../config/api-config'
 import { GenericController } from './../../generic/controller/generic-controller';
 import { GenericResponse } from './../api-response/generic-response';
 import { BaseModel } from '../../generic/model/base-model';
+import jwt from 'koa-jwt'
+import { IServer } from '../api.model';
 
-export class KoaServer {
-    
+export class KoaServer implements IServer {
+
     public app: Koa
     public router: KoaRouter
 
-    constructor () {
+    constructor() {
+
         this.app = module.exports = new Koa()
         this.router = new KoaRouter()
 
-        //middleware
         this.app.use(cors())
-                .use(koaBody())
-                .use(koaLogger())
-                .use(errorHandler.catcher)
-
+            .use(koaBody())
+            .use(koaLogger())
+            .use(errorHandler.catcher)
+            .use(jwt({ secret: config.security.secret }).unless({ path: ['/api/status', '/api/login'] }));
 
         this.app.on('error', errorHandler.handler)
 
-        // Middleware below this line is only reached if JWT token is valid
-
         this.router.prefix(config.koa.prefix)
         this.router.get('/status', async (ctx: Koa.Context, next: Koa.Next) => {
-            ctx.body = new GenericResponse(true, 'Servidor Online', undefined)
+            ctx.body = new GenericResponse(true, 'Servidor Online')
         })
-        
     }
 
-    applyRoutes(controllers: GenericController<BaseModel>[]) {
+    ApplyRoutes(controllers: GenericController<BaseModel>[]) {
 
         for (let controller of controllers) {
             controller.applyRoutes(this.router)
         }
 
         this.app.use(this.router.routes())
-                .use(this.router.allowedMethods())
+            .use(this.router.allowedMethods())
 
         if (config.koa.debug) {
             console.log(`Rotas Disponíveis
@@ -51,12 +50,11 @@ export class KoaServer {
             `)
 
             this.router.stack.map((i: KoaRouter.Layer) =>
-            console.log(`http://localhost:${config.koa.port}` + i.path))
+                console.log(`http://localhost:${config.koa.port}` + i.path))
         }
-
     }
 
-    init() {
+    Init() {
 
         const server = this.app.listen(config.koa.port)
 
@@ -67,5 +65,4 @@ export class KoaServer {
 
         return server
     }
-
 }

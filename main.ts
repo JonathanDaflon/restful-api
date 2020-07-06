@@ -1,12 +1,14 @@
+import { IServer } from './core/api/api.model';
 import { mongoConn } from './core/db/mongodb';
-import { KoaServer } from './core/api/koa/koa';
-import { usersController } from './core/users/users-controller';
+import { usersController } from './core/resources/users/users.controller';
+import { configService } from './config/config-service';
 
+var myServer: IServer | null = configService.CriarServidor();
 
-export const koaServer = new KoaServer()
+if (myServer != null) {
 
-koaServer.init()
+    myServer.Init()
+    myServer.ApplyRoutes([usersController]);
 
-mongoConn.creatConnection()
-         .then( () => koaServer.applyRoutes([usersController]))
-
+    mongoConn.creatConnection();
+}

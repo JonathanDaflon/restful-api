@@ -12,6 +12,7 @@ class ErrorHandler {
             return await next()
 
         } catch (err) {
+            ctx.status = 200;
             ctx.app.emit('error', err, ctx)
         }
     }
@@ -37,7 +38,6 @@ class ErrorHandler {
                 if (err.message.startsWith('User validation')) {
 
                     if (Array.isArray(validationError.errors)) {
-
                         let messages: string[] = [];
 
                         for (let i = 0; i < validationError.errors.length; i++) {
@@ -48,15 +48,36 @@ class ErrorHandler {
                     }
                 }
 
-            ctx.body = response;
+            //#region MyHeroException
+            case 'MyHeroException':
 
-            if (config.koa.debug) {
-                console.log('koa middleware - error ->')
-                console.log(err)
-            }
+                if (err.message == "Invalid Email") {
+                    response.Data("Esse email não está cadastrado")
+                    break
+                }
+            //#endregion
+
+            case 'UnauthorizedError':
+
+                if (err.message.startsWith('Authentication Error')) {
+                    response.Data("Credenciais Inválidas")
+                    break
+                }
+
+                if (err.message.startsWith('Unauthorized')) {
+                    response.Data(err.message)
+                    break
+
+                }
+        }
+
+        ctx.body = response;
+
+        if (config.koa.debug) {
+            console.log('koa middleware - error ->')
+            console.log(err)
         }
     }
-
 }
 
 export const errorHandler = new ErrorHandler()

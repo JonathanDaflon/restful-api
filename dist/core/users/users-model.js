@@ -20,10 +20,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-var api_config_1 = require("./../../config/api-config");
-var mongoose = __importStar(require("mongoose"));
-var bcrypt = __importStar(require("bcrypt"));
-var userSchema = new mongoose.Schema({
+const api_config_1 = require("./../../config/api-config");
+const mongoose = __importStar(require("mongoose"));
+const bcrypt = __importStar(require("bcrypt"));
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -48,29 +48,34 @@ var userSchema = new mongoose.Schema({
     }
 });
 userSchema.pre('save', function (next) {
-    var user = this;
+    const user = this;
     if (!user.isModified('password')) {
         next();
     }
     else {
-        bcrypt.hash(user.password, api_config_1.config.security)
-            .then(function (hash) {
+        bcrypt.hash(user.password, api_config_1.config.security.rounds)
+            .then(hash => {
             user.password = hash;
             next();
         }).catch(next);
     }
 });
 userSchema.pre('findOneAndUpdate', function (next) {
-    var _this = this;
     if (!this.getUpdate().password) {
         next();
     }
     else {
-        bcrypt.hash(this.getUpdate().password, api_config_1.config.security)
-            .then(function (hash) {
-            _this.getUpdate().password = hash;
+        bcrypt.hash(this.getUpdate().password, api_config_1.config.security.rounds)
+            .then(hash => {
+            this.getUpdate().password = hash;
             next();
         }).catch(next);
     }
 });
+userSchema.statics.findByEmail = function (email, projection) {
+    return this.findOne({ email }, projection);
+};
+userSchema.methods.matches = function (password) {
+    return bcrypt.compareSync(password, this.password);
+};
 exports.User = mongoose.model('User', userSchema);

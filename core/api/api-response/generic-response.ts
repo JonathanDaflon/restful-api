@@ -1,12 +1,10 @@
 export class GenericResponse {
     private result: boolean = false
     private data: any = undefined
-    private error: any = undefined
 
-    constructor(result: boolean, data: any, error: any) {
+    constructor(result: boolean, data: any) {
         this.result = result
         this.data = data
-        this.error = error
     }
     Data(data: any) {
         this.data = data;
