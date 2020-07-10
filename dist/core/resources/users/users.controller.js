@@ -16,7 +16,7 @@ const ok_response_1 = require("../../api/api-response/ok-response");
 const generic_controller_1 = require("../../generic/controller/generic-controller");
 class UsersController extends generic_controller_1.GenericController {
     constructor() {
-        super(users_mongoose_1.User);
+        super(users_mongoose_1.User, users_service_1.UserService);
     }
     applyRoutes(router) {
         this.httpService.Apply(router);

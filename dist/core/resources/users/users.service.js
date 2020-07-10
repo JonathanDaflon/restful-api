@@ -28,13 +28,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userService = void 0;
+exports.userService = exports.UserService = void 0;
 const my_hero_exception_1 = require("./../../api/exception/my-hero-exception");
 const bcrypt = __importStar(require("bcrypt"));
 const users_mongoose_1 = require("./users.mongoose");
 const koa_jwt_service_1 = require("../../auth/jwt/koa-jwt.service");
 const generic_service_1 = require("../../generic/service/generic.service");
 class UserService extends generic_service_1.GenericService {
+    constructor() {
+        super(users_mongoose_1.User);
+    }
     Login(email, senha) {
         return __awaiter(this, void 0, void 0, function* () {
             let document = yield users_mongoose_1.User.findOne({ email }, '+password');
@@ -55,4 +58,5 @@ class UserService extends generic_service_1.GenericService {
         });
     }
 }
-exports.userService = new UserService(users_mongoose_1.User);
+exports.UserService = UserService;
+exports.userService = new UserService();

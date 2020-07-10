@@ -9,7 +9,11 @@ export interface IUserService {
     Login(email: string, senha: string): Promise<string>
 }
 
-class UserService extends GenericService<IUser> implements IUserService {
+export class UserService extends GenericService<IUser> implements IUserService {
+
+    constructor() {
+        super(User);
+    }
 
     public async Login(email: string, senha: string): Promise<string> {
 
@@ -35,4 +39,4 @@ class UserService extends GenericService<IUser> implements IUserService {
     // KoaJwtService
 }
 
-export const userService = new UserService(User)
+export const userService = new UserService()

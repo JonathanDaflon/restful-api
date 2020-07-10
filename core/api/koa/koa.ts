@@ -1,3 +1,4 @@
+import { GenericService } from './../../generic/service/generic.service';
 import { errorHandler } from './../api-response/error-handling';
 import Koa from 'koa'
 import KoaRouter from 'koa-router'
@@ -35,7 +36,7 @@ export class KoaServer implements IServer {
         })
     }
 
-    ApplyRoutes(controllers: GenericController<BaseModel>[]) {
+    ApplyRoutes(controllers: GenericController<BaseModel, GenericService<BaseModel>>[]) {
 
         for (let controller of controllers) {
             controller.applyRoutes(this.router)

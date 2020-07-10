@@ -14,54 +14,35 @@ const my_hero_exception_1 = require("./../../api/exception/my-hero-exception");
 const ok_response_1 = require("./../../api/api-response/ok-response");
 const http_factory_1 = require("../http/http-factory");
 class GenericController {
-    constructor(model) {
+    constructor(model, SCreator) {
         this.model = model;
         this.findAll = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            ctx.body = new ok_response_1.OkResponse(yield this.model.find());
+            ctx.body = new ok_response_1.OkResponse(yield this.genericService.findAll());
             next();
         });
         this.findByID = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            let a = yield this.model.findById({ _id: ctx.params.id });
-            if (a != null || undefined) {
-                ctx.body = new ok_response_1.OkResponse(a);
-                next();
-            }
+            ctx.body = new ok_response_1.OkResponse(yield this.genericService.findByID(ctx.params.id));
+            next();
         });
         this.newDocument = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            let document = new this.model(ctx.request.body);
-            yield document.save().then(doc => {
-                ctx.body = new ok_response_1.OkResponse(doc);
-            });
+            ctx.body = new ok_response_1.OkResponse(yield this.genericService.newDocument(ctx.request.body));
+            next();
         });
         this.overwriteDocument = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            const options = { runValidators: true, overwrite: true };
-            yield this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
-                .then(document => {
-                if (document) {
-                    ctx.body = new ok_response_1.OkResponse(document);
-                    next();
-                }
-            });
+            ctx.body = new ok_response_1.OkResponse(yield this.genericService.overwriteDocument(ctx.params.id, ctx.request.body));
+            next();
         });
         this.updateDocument = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            const options = { runValidators: true, new: true };
-            yield this.model.findByIdAndUpdate(ctx.params.id, ctx.request.body, options)
-                .then(document => {
-                if (document) {
-                    ctx.body = new ok_response_1.OkResponse(document);
-                    next();
-                }
-            });
+            ctx.body = new ok_response_1.OkResponse(yield this.genericService.updateDocument(ctx.params.id, ctx.request.body));
+            next();
         });
         this.deleteDocument = (ctx, next) => __awaiter(this, void 0, void 0, function* () {
-            yield this.model.remove({ _id: ctx.params.id }).exec().then(results => {
-                if (results.n) {
-                    new ok_response_1.OkResponse('Documento excluído');
-                    next();
-                }
-            });
+            yield this.genericService.deleteDocument(ctx.params.id);
+            ctx.body = new ok_response_1.OkResponse("Documento deletado com sucesso!");
+            next();
         });
         this.httpService = new http_factory_1.HttpService();
+        this.genericService = new SCreator();
     }
     applyRoutes(koaRouter) {
         throw new my_hero_exception_1.MyHeroException("Method not implemented.");

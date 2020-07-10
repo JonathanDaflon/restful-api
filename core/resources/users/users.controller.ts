@@ -1,15 +1,16 @@
+import { GenericService } from './../../generic/service/generic.service';
 import KoaRouter from 'koa-router'
 import { IUser } from './users.model'
 import { User } from './users.mongoose';
-import { userService } from './users.service';
+import { userService, UserService } from './users.service';
 import { OkResponse } from '../../api/api-response/ok-response';
 import { GenericController } from '../../generic/controller/generic-controller'
 import { Context, Next } from 'koa';
 
-class UsersController extends GenericController<IUser> {
+class UsersController extends GenericController<IUser, UserService> {
 
     constructor() {
-        super(User)
+        super(User, UserService)
     }
 
     applyRoutes(router: KoaRouter<any, {}> | undefined): void {
@@ -17,7 +18,9 @@ class UsersController extends GenericController<IUser> {
         this.httpService.Apply(router)
 
         this.httpService.Get('/users', this.findAll)
+
         this.httpService.Get('/users/:id', this.findByID)
+
         this.httpService.Get('/users/email/:email', async (ctx: Context, next: Next) => {
 
             const { email } = ctx.params
