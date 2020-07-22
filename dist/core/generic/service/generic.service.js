@@ -10,35 +10,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenericService = void 0;
+const data_access_1 = require("../data-access/data.access");
 class GenericService {
     constructor(model) {
         this.model = model;
         this.findAll = () => __awaiter(this, void 0, void 0, function* () {
-            let document = yield this.model.find();
+            let document = yield this.genericDataAccess.findAll();
             return document;
         });
         this.findByID = (_id) => __awaiter(this, void 0, void 0, function* () {
-            let document = yield this.model.findById({ _id });
+            let document = yield this.genericDataAccess.findByID(_id);
             return document;
         });
         this.newDocument = (document) => __awaiter(this, void 0, void 0, function* () {
-            document = new this.model(document);
-            yield document.save();
+            document = yield this.genericDataAccess.create(document);
             return document;
         });
         this.overwriteDocument = (_id, document) => __awaiter(this, void 0, void 0, function* () {
-            const options = { runValidators: true, overwrite: true, new: true };
-            document = yield this.model.findByIdAndUpdate(_id, document, options);
+            document = yield this.genericDataAccess.overwrite(_id, document);
             return document;
         });
         this.updateDocument = (_id, document) => __awaiter(this, void 0, void 0, function* () {
-            const options = { runValidators: true, new: true };
-            document = yield this.model.findByIdAndUpdate(_id, document, options);
+            document = yield this.genericDataAccess.update(_id, document);
             return document;
         });
         this.deleteDocument = (document) => __awaiter(this, void 0, void 0, function* () {
-            yield this.model.remove({ _id: document }).exec();
+            yield this.genericDataAccess.delete({ _id: document });
         });
+        this.genericDataAccess = new data_access_1.GenericDataAccess(model);
     }
 }
 exports.GenericService = GenericService;

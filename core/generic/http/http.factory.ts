@@ -1,4 +1,4 @@
-import { koaJwtService } from './../../auth/jwt/koa-jwt.service';
+import { koaJwtService } from '../../auth/jwt/koa-jwt.service';
 import KoaRouter from 'koa-router';
 
 export class HttpService {

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenericController = void 0;
 const my_hero_exception_1 = require("./../../api/exception/my-hero-exception");
 const ok_response_1 = require("./../../api/api-response/ok-response");
-const http_factory_1 = require("../http/http-factory");
+const http_factory_1 = require("../http/http.factory");
 class GenericController {
     constructor(model, SCreator) {
         this.model = model;

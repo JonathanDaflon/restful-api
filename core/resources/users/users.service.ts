@@ -12,7 +12,7 @@ export interface IUserService {
 export class UserService extends GenericService<IUser> implements IUserService {
 
     constructor() {
-        super(User);
+        super(User)
     }
 
     public async Login(email: string, senha: string): Promise<string> {

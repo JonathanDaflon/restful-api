@@ -5,12 +5,13 @@ import KoaRouter from 'koa-router';
 import * as mongoose from 'mongoose';
 import { Context, Next } from 'koa';
 import { BaseModel } from '../model/base-model';
-import { HttpService } from '../http/http-factory';
+import { HttpService } from '../http/http.factory';
 
 export abstract class GenericController<T extends BaseModel, S extends GenericService<T>> {
 
     protected httpService: HttpService
     protected genericService: S
+
 
     constructor(protected model: mongoose.Model<T>, SCreator: (new () => S)) {
         this.httpService = new HttpService()
