@@ -7,7 +7,7 @@ exports.config = {
         //"koa", "express"
         api: "koa",
         //"mongo", "postgre"
-        db: "postgre"
+        db: "mongo"
     },
     koa: {
         port: process.env.PORT || 3000,

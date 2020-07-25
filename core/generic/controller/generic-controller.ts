@@ -12,7 +12,6 @@ export abstract class GenericController<T extends BaseModel, S extends GenericSe
     protected httpService: HttpService
     protected genericService: S
 
-
     constructor(protected model: mongoose.Model<T>, SCreator: (new () => S)) {
         this.httpService = new HttpService()
         this.genericService = new SCreator()

@@ -30,7 +30,7 @@ class UsersController extends generic_controller_1.GenericController {
         this.httpService.Post('/users', this.newDocument);
         this.httpService.Post('/login', (ctx, next) => __awaiter(this, void 0, void 0, function* () {
             const { email, password } = ctx.request.body;
-            ctx.body = new ok_response_1.OkResponse({ "accessToken": yield users_service_1.userService.Login(email, password) });
+            ctx.body = new ok_response_1.OkResponse({ "access_Token": yield users_service_1.userService.Login(email, password) });
             yield next();
         }));
         this.httpService.Put('/users/:id', this.overwriteDocument);

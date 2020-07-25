@@ -10,7 +10,7 @@ class KoaJwtService implements IJwtService {
     }
 
     async Verify(ctx: Context, next: Next) {
-    
+
         if (ctx.url.match(/^\/api\/status/) || ctx.url.match(/^\/api\/login/)) {
             await next()
 
@@ -41,7 +41,6 @@ function verify(ctx: Context, token: string) {
         ctx.throw(400)
 
     }
-
     return decoded;
 }
 

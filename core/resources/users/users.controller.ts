@@ -1,4 +1,3 @@
-import { GenericService } from './../../generic/service/generic.service';
 import KoaRouter from 'koa-router'
 import { IUser } from './users.model'
 import { User } from './users.mongoose';
@@ -31,7 +30,7 @@ class UsersController extends GenericController<IUser, UserService> {
             const { email, password } = ctx.request.body
 
             ctx.body = new OkResponse(
-                { "accessToken": await userService.Login(email, password) })
+                { "access_Token": await userService.Login(email, password) })
 
             await next()
         })

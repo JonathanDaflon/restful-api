@@ -31,7 +31,7 @@ export class GenericDataAccess<T extends BaseModel> {
             document = await this.model.findById({ _id })
 
         if (config.deploy.db == "postgre")
-            document = await postgresConn.query(`SELECT * from public.user where id = ${_id};`)
+            document = (await postgresConn.query(`SELECT * from public.user where id = ${_id};`))[0]
 
         return document
     }
